@@ -17,3 +17,15 @@
   :serial t
   :components ((:file "src/claw")
                (:module :impeller-includes :pathname "src/lib/impeller/engine/src/flutter/impeller/toolkit/interop")))
+
+
+(asdf:defsystem :aw-impeller/example
+  :description "aw-impeller example"
+  :version "1.0.0"
+  :author "Pavel Korolev"
+  :mailto "dev@borodust.org"
+  :license "MIT"
+  :depends-on (:alexandria :aw-impeller :aw-sdl3
+                           :cffi-c-ref :static-vectors :trivial-main-thread)
+  :pathname "example/"
+  :components ((:file "example")))
