@@ -79,7 +79,9 @@
           (fb-size :height) 480
 
           (vk-opts :proc-address-callback) (%sdl3:vulkan-get-vk-get-instance-proc-addr)
-          (vk-opts :enable-vulkan-validation) t)
+          (vk-opts :enable-vulkan-validation) t
+
+          vk-surface (cffi:null-pointer))
 
     (let ((ctx (%impeller:context-create-vulkan-new %impeller:+version+
                                                     (vk-opts &))))
@@ -94,18 +96,14 @@
                                                   (cffi:null-pointer)
                                                   (vk-surface &))
                (error "Failed to create Vulkan surface"))
-             (unwind-protect
-                  (let ((swap-chain
-                          (%impeller:vulkan-swapchain-create-new ctx
-                                                                 vk-surface)))
-                    (when (cffi:null-pointer-p swap-chain)
-                      (error "Failed to init Vulkan swap chain"))
-                    (unwind-protect
-                         (impeller-draw swap-chain)
-                      (%impeller:vulkan-swapchain-release swap-chain)))
-               (%sdl3:vulkan-destroy-surface (vk-info :vk-instance)
-                                             vk-surface
-                                             (cffi:null-pointer))))
+             (let ((swap-chain
+                     (%impeller:vulkan-swapchain-create-new ctx
+                                                            vk-surface)))
+               (when (cffi:null-pointer-p swap-chain)
+                 (error "Failed to init Vulkan swap chain"))
+               (unwind-protect
+                    (impeller-draw swap-chain)
+                 (%impeller:vulkan-swapchain-release swap-chain))))
         (%impeller:context-release ctx)))))
 
 
